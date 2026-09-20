@@ -1,0 +1,10 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+const root=resolve(new URL("..",import.meta.url).pathname.replace(/^\/(.:)/,"$1"));
+const source=await readFile(resolve(root,"dist/server/index.js"),"utf8");
+const manifest=JSON.parse(await readFile(resolve(root,"dist/.openai/hosting.json"),"utf8"));
+assert.equal(manifest.d1,"DB");
+const mod=await import("data:text/javascript;base64,"+Buffer.from(source).toString("base64"));
+assert.equal(typeof mod.default?.fetch,"function");
+console.log("Artifact is valid and exports default.fetch");

@@ -1,0 +1,11 @@
+import { cp, mkdir, rm } from "node:fs/promises";
+import { resolve } from "node:path";
+const root = resolve(new URL("..", import.meta.url).pathname.replace(/^\/(.:)/, "$1"));
+const dist = resolve(root, "dist");
+await rm(dist, { recursive: true, force: true });
+await mkdir(resolve(dist, "server"), { recursive: true });
+await mkdir(resolve(dist, ".openai", "drizzle"), { recursive: true });
+await cp(resolve(root, "worker", "index.js"), resolve(dist, "server", "index.js"));
+await cp(resolve(root, ".openai", "hosting.json"), resolve(dist, ".openai", "hosting.json"));
+await cp(resolve(root, "drizzle", "0000_aurum_store.sql"), resolve(dist, ".openai", "drizzle", "0000_aurum_store.sql"));
+console.log("Built", dist);
